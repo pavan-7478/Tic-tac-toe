@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <style>
+    *{
+        border:0px;
+        padding: 0px;
+        margin: 0px;
+    }
+    .heading{
+        margin-top:20px;
+        background-color:yellow;
+        color:rgb(51, 17, 161);
+        display: flex;
+        height: 65px;
+        font-size: 27px;
+        align-items: center;
+        padding: 0 12px;
+        font-family:  sans-serif;
+       justify-content: center;
+    }
+    .hide{
+       display: none;
+    }
+    .gameContainer{ 
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        background-color: cadetblue;
+        background-attachment: fixed;
+    }
+    .box{
+           border:2px solid black;
+           font-size: 8vw;
+           cursor: pointer;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+    }
+    .box:hover{
+        background-color: rgb(242, 234, 250);
+    }
+    .container{
+        display: grid;
+        grid-template-rows: repeat(3, 10vw);
+        grid-template-columns: repeat(3, 10vw);
+        font-family: 'Roboto', sans-serif;
+        position: relative;
+    }
+    .info{
+        font-size: 52px;
+        font-weight: 700;
+        background-color: aquamarine;
+    }
+    .line{
+        background-color: black;
+        height: 3px;
+        width: 0;
+        position: absolute;
+        background-color: #911d91;
+        transition: width 1s ease-in-out;
+    }
+    
+    .Gameinfo{
+        padding: 0 32px;
+        font-family: 'Baloo Bhaina 2';
+        margin:25px;
+    }
+    #reset{
+        background-color: red;
+        padding:10px;
+        margin:15px;
+        border-radius: 6px;
+        border: 2px solid black;
+        transform: translate(1080px,-615px);
+    }
+    #reset:hover{
+        cursor: pointer;
+        background-color: rgba(138,43,226,0.6);
+    }
+    .br-0{
+        border-right: 0;
+    }
+    
+    .bl-0{
+        border-left: 0;
+    }
+    
+    .bt-0{
+        border-top: 0;
+    }
+    
+    .bb-0{
+        border-bottom: 0;
+    }
+    #result{
+        background-color:black;
+        color:floralwhite;
+        justify-items: center;
+        align-items: center;
+        font-size:large;
+         text-align: center;
+         margin:20px;
+         padding:15px;
+         
+    
+    }
+    @media screen and (max-width: 950px)
+    {
+        .gameContainer{
+            flex-wrap: wrap;
+        }
+        .Gameinfo{
+            margin-top: 34px;
+        }
+        .container { 
+            grid-template-rows: repeat(3, 20vw);
+            grid-template-columns: repeat(3, 20vw);
+        }
+         .line{
+            display:none;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div class="heading">
+    <h3>Tic Tac Toe</h3>
+</div>
+<div class="hide" id="result">Hello</div>
+    <div class="gameContainer">
+        <div class="container">
+            <div class="line"></div>
+            <div class="box bt-0 bl-0"><span class="boxtext"></span></div>
+            <div class="box bt-0"><span class="boxtext"></span></div>
+            <div class="box bt-0 br-0"><span class="boxtext"></span></div>
+            <div class="box bl-0"><span class="boxtext"></span></div>
+            <div class="box"><span class="boxtext"></span></div>
+            <div class="box br-0"><span class="boxtext"></span></div>
+            <div class="box bl-0 bb-0"><span class="boxtext"></span></div>
+            <div class="box bb-0"><span class="boxtext"></span></div>
+            <div class="box bb-0 br-0"><span class="boxtext"></span></div>
+        </div>
+    </div>
+    <div class="Gameinfo">
+        <span class="info">Turn for X</span>
+        <button id="reset">RESET</button>
+    </div>
+    <script> 
+        let turn = "X";
+        let game_over = false;
+        //to change turn 
+        const change_turn = () => {
+            if (turn === "X") {
+                return "O"
+            }
+            else {
+                return "X"
+            }
+        }
+        //to check for win
+        const checkWin = () => {
+            let boxtexts = document.getElementsByClassName('boxtext')
+            let wins = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ]
+            wins.forEach(e => {
+                if ((boxtexts[e[0]].innerText === boxtexts[e[1]].innerText) && (boxtexts[e[0]].innerText === boxtexts[e[2]].innerText) && (boxtexts[e[0]].innerText !== "")) {
+                    document.querySelector('.info').innerText = boxtexts[e[0]].innerText + " Won"
+                    game_over = true;
+                    document.querySelector(".line").style.transform = `translate(${e[3]}vw, ${e[4]}vw) rotate(${e[5]}deg)`;                   
+                    document.querySelector(".line").style.width = "20vw";
+                    document.getElementById("result").innerText=boxtexts[e[0]].innerText+" "+"Won"+" "+"Press reset to restart the game!";
+                    document.getElementById("result").classList.remove("hide");
+                }
+            })
+        }
+        //Game Logic
+        let boxes = document.getElementsByClassName("box");
+        let chances=0;
+        Array.from(boxes).forEach(element => {
+            let boxtext = element.querySelector('.boxtext')
+            element.addEventListener('click', () => {
+                if (boxtext.innerText === '') {
+                    boxtext.innerText = turn
+                    chances++
+                    checkWin()
+                     if(chances===9){
+                        document.getElementById("result").innerText="Game Drawn"
+                        document.getElementById("result").classList.remove("hide")
+                    }
+                    if (!game_over) {
+                        turn = change_turn()
+                        document.getElementsByClassName("info")[0].innerText = "Turn for"+" " + turn;
+                    }
+                }
+            })
+        })
+        //logic for reset button
+        let reset = document.getElementById("reset")
+        reset.addEventListener('click', () => {
+            chances=0
+            let boxtexts = document.querySelectorAll('.boxtext')
+            Array.from(boxtexts).forEach(element => {
+                element.innerText = ''
+            })
+            // console.log("click Detected")
+            turn = "X"
+            game_over = false
+            document.querySelector(".line").style.width = "0vw";
+            document.getElementsByClassName("info")[0].innerText = "Turn for" + turn;
+            document.getElementById("result").classList.add("hide")
+        })</script>
+</body>
+</html>
